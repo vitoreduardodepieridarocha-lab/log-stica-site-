@@ -132,3 +132,11 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",
   const target=document.querySelector(a.getAttribute("href"));
   if(target){e.preventDefault();target.scrollIntoView({behavior:"smooth"});nav.classList.remove("open");}
 }));
+// ABRIR O MUNDO 3D EM UMA NOVA PÁGINA
+const floatingGlobe = document.getElementById("floatingGlobe");
+
+if (floatingGlobe) {
+  floatingGlobe.addEventListener("click", () => {
+    window.location.href = "world.html";
+  });
+}
