@@ -4,109 +4,154 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MON World 3D</title>
+<title>MON World</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #020617;
-    font-family: Arial, sans-serif;
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#020617;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-#globe {
-    width: 100%;
-    height: 100%;
+#globe{
+    position:fixed;
+    inset:0;
 }
 
-.back-button {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
+/* VOLTAR */
+.back{
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:20;
 
-    padding: 12px 18px;
+    padding:12px 18px;
 
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: 12px;
+    color:white;
+    text-decoration:none;
 
-    background: rgba(0,0,0,.55);
-    color: white;
+    background:rgba(5,15,30,.75);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:12px;
 
-    text-decoration: none;
-    font-size: 15px;
-
-    backdrop-filter: blur(10px);
+    backdrop-filter:blur(12px);
 }
 
-.title {
-    position: fixed;
-    top: 22px;
-    right: 25px;
-    z-index: 1000;
+/* TÍTULO */
+.title{
+    position:fixed;
+    top:24px;
+    right:25px;
+    z-index:20;
 
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 2px;
+    color:white;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:3px;
 }
 
-.country-info {
-    position: fixed;
-    left: 50%;
-    bottom: 25px;
-    transform: translateX(-50%);
+/* PAINEL DO PAÍS */
+.country-box{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%);
 
-    z-index: 1000;
+    z-index:20;
 
-    min-width: 240px;
-    padding: 14px 22px;
+    min-width:250px;
 
-    text-align: center;
+    padding:14px 24px;
 
-    color: white;
+    text-align:center;
 
-    background: rgba(0,0,0,.65);
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: 15px;
+    color:white;
 
-    backdrop-filter: blur(12px);
+    background:rgba(3,12,25,.82);
+    border:1px solid rgba(0,180,255,.3);
+    border-radius:16px;
 
-    font-size: 15px;
+    backdrop-filter:blur(15px);
+
+    box-shadow:0 10px 40px rgba(0,0,0,.35);
 }
 
-#countryName {
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 4px;
+.country-label{
+    font-size:11px;
+    color:#8ca5bd;
+    text-transform:uppercase;
+    letter-spacing:2px;
 }
 
-.instructions {
-    position: fixed;
-    left: 50%;
-    top: 65px;
-    transform: translateX(-50%);
+#countryName{
+    margin-top:5px;
 
-    z-index: 1000;
+    font-size:21px;
+    font-weight:bold;
 
-    color: rgba(255,255,255,.75);
-    font-size: 12px;
+    color:#ffffff;
+}
 
-    white-space: nowrap;
+/* INSTRUÇÕES */
+.help{
+    position:fixed;
+    top:65px;
+    left:50%;
+    transform:translateX(-50%);
+
+    z-index:20;
+
+    padding:8px 14px;
+
+    color:rgba(255,255,255,.7);
+
+    font-size:12px;
+
+    background:rgba(0,0,0,.3);
+    border-radius:20px;
+
+    white-space:nowrap;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+    .title{
+        right:15px;
+        top:24px;
+        font-size:12px;
+    }
+
+    .back{
+        top:15px;
+        left:15px;
+        padding:10px 14px;
+    }
+
+    .help{
+        top:62px;
+        font-size:10px;
+    }
+
+    .country-box{
+        bottom:18px;
+        min-width:220px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<a href="index.html" class="back-button">
+<a href="index.html" class="back">
     ← Voltar
 </a>
 
@@ -114,175 +159,655 @@ html, body {
     MON WORLD
 </div>
 
-<div class="instructions">
-    Arraste para girar • Scroll para aproximar • Clique em um país
+<div class="help">
+    Arraste para girar • Pinça/scroll para zoom • Clique no país
 </div>
 
 <div id="globe"></div>
 
-<div class="country-info">
-    País selecionado
-    <div id="countryName">Nenhum</div>
+<div class="country-box">
+    <div class="country-label">
+        País selecionado
+    </div>
+
+    <div id="countryName">
+        Nenhum
+    </div>
 </div>
 
 
-<script src="https://unpkg.com/globe.gl"></script>
+<!-- THREE.JS -->
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+
+<script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
 
 <script>
 
-let selectedCountry = null;
+const container = document.getElementById("globe");
 
 
-/* =========================
-   CRIAR GLOBO
-========================= */
+/* =====================================================
+   CENA
+===================================================== */
 
-const globe = Globe()
-    (document.getElementById("globe"))
+const scene = new THREE.Scene();
 
-    .backgroundColor("#020617")
 
-    .globeImageUrl(
-        "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-    )
+/* =====================================================
+   CÂMERA
+===================================================== */
 
-    .bumpImageUrl(
-        "https://unpkg.com/three-globe/example/img/earth-topology.png"
-    )
+const camera = new THREE.PerspectiveCamera(
+    35,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
 
-    /* =========================
-       PAÍSES
-    ========================= */
+camera.position.set(0,0,3);
 
-    .polygonsData([])
 
-    .polygonAltitude(0.01)
+/* =====================================================
+   RENDER
+===================================================== */
 
-    .polygonCapColor(country => {
+const renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    alpha:false
+});
 
-        const name =
-            country.properties.ADMIN ||
-            country.properties.NAME ||
-            country.properties.name ||
-            "";
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,2)
+);
 
-        if (name === selectedCountry) {
-            return "rgba(0,170,255,0.75)";
-        }
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
 
-        return "rgba(20,100,180,0.20)";
-    })
+renderer.setClearColor(
+    0x020617,
+    1
+);
 
-    .polygonSideColor(() => {
-        return "rgba(0,80,150,0.15)";
-    })
+container.appendChild(
+    renderer.domElement
+);
 
-    .polygonStrokeColor(country => {
 
-        const name =
-            country.properties.ADMIN ||
-            country.properties.NAME ||
-            country.properties.name ||
-            "";
+/* =====================================================
+   LUZ
+===================================================== */
 
-        if (name === selectedCountry) {
-            return "#00d9ff";
-        }
+const ambient = new THREE.AmbientLight(
+    0xffffff,
+    1.7
+);
 
-        return "rgba(120,190,255,0.65)";
-    })
+scene.add(ambient);
 
-    .polygonLabel(country => {
 
-        const name =
-            country.properties.ADMIN ||
-            country.properties.NAME ||
-            country.properties.name ||
-            "País";
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    3
+);
 
-        return `
-            <div style="
-                background:rgba(0,0,0,.8);
-                padding:8px 12px;
-                border-radius:8px;
-                color:white;
-                font-size:14px;
-            ">
-                ${name}
-            </div>
-        `;
-    })
+sun.position.set(
+    5,
+    3,
+    5
+);
 
-    /* =========================
-       CLIQUE NO PAÍS
-    ========================= */
+scene.add(sun);
 
-    .onPolygonClick(country => {
 
-        selectedCountry =
-            country.properties.ADMIN ||
-            country.properties.NAME ||
-            country.properties.name ||
-            "País desconhecido";
+/* =====================================================
+   TERRA
+===================================================== */
 
-        document.getElementById("countryName").textContent =
-            selectedCountry;
+const earthGeometry =
+    new THREE.SphereGeometry(
+        1,
+        128,
+        128
+    );
 
-        globe
-            .polygonsData(globe.polygonsData());
+
+const earthMaterial =
+    new THREE.MeshPhongMaterial({
+
+        shininess:8,
+
+        specular:0x222222
 
     });
 
 
-/* =========================
+const earth =
+    new THREE.Mesh(
+        earthGeometry,
+        earthMaterial
+    );
+
+scene.add(earth);
+
+
+/* =====================================================
+   TEXTURA NÍTIDA
+===================================================== */
+
+const loader =
+    new THREE.TextureLoader();
+
+
+loader.load(
+
+    "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg",
+
+    function(texture){
+
+        texture.anisotropy =
+            renderer.capabilities.getMaxAnisotropy();
+
+        texture.minFilter =
+            THREE.LinearMipmapLinearFilter;
+
+        texture.magFilter =
+            THREE.LinearFilter;
+
+        earthMaterial.map =
+            texture;
+
+        earthMaterial.needsUpdate =
+            true;
+    }
+
+);
+
+
+/* =====================================================
+   NUVENS
+===================================================== */
+
+loader.load(
+
+    "https://threejs.org/examples/textures/planets/earth_clouds_1024.png",
+
+    function(texture){
+
+        const cloudGeometry =
+            new THREE.SphereGeometry(
+                1.008,
+                128,
+                128
+            );
+
+        const cloudMaterial =
+            new THREE.MeshPhongMaterial({
+
+                map:texture,
+
+                transparent:true,
+
+                opacity:.28,
+
+                depthWrite:false
+
+            });
+
+        const clouds =
+            new THREE.Mesh(
+                cloudGeometry,
+                cloudMaterial
+            );
+
+        scene.add(clouds);
+
+        window.cloudLayer =
+            clouds;
+
+    }
+
+);
+
+
+/* =====================================================
+   ATMOSFERA
+===================================================== */
+
+const atmosphereGeometry =
+    new THREE.SphereGeometry(
+        1.035,
+        128,
+        128
+    );
+
+
+const atmosphereMaterial =
+    new THREE.MeshBasicMaterial({
+
+        color:0x168cff,
+
+        transparent:true,
+
+        opacity:.10,
+
+        side:THREE.BackSide
+
+    });
+
+
+const atmosphere =
+    new THREE.Mesh(
+        atmosphereGeometry,
+        atmosphereMaterial
+    );
+
+scene.add(atmosphere);
+
+
+/* =====================================================
    CONTROLES
-========================= */
+===================================================== */
 
-globe.controls().enableZoom = true;
-globe.controls().enableRotate = true;
-globe.controls().enablePan = false;
+const controls =
+    new THREE.OrbitControls(
+        camera,
+        renderer.domElement
+    );
 
-globe.controls().minDistance = 120;
-globe.controls().maxDistance = 500;
+controls.enableDamping =
+    true;
+
+controls.dampingFactor =
+    .05;
+
+controls.enableRotate =
+    true;
+
+controls.enableZoom =
+    true;
+
+controls.enablePan =
+    false;
+
+controls.minDistance =
+    1.45;
+
+controls.maxDistance =
+    6;
 
 
-/* =========================
-   CARREGAR PAÍSES
-========================= */
+/* =====================================================
+   PAÍSES
+===================================================== */
+
+let countries = [];
+
+let selectedCountry = null;
+
+
+/* =====================================================
+   RAYCAST
+===================================================== */
+
+const raycaster =
+    new THREE.Raycaster();
+
+const mouse =
+    new THREE.Vector2();
+
+
+/* =====================================================
+   CAMADA DOS PAÍSES
+===================================================== */
+
+const countryLayer =
+    new THREE.Group();
+
+scene.add(
+    countryLayer
+);
+
+
+/* =====================================================
+   CONVERTER LAT/LON
+===================================================== */
+
+function latLonToVector3(
+    lat,
+    lon,
+    radius
+){
+
+    const phi =
+        (90 - lat) * Math.PI / 180;
+
+    const theta =
+        (lon + 180) * Math.PI / 180;
+
+    const x =
+        -radius *
+        Math.sin(phi) *
+        Math.cos(theta);
+
+    const z =
+        radius *
+        Math.sin(phi) *
+        Math.sin(theta);
+
+    const y =
+        radius *
+        Math.cos(phi);
+
+    return new THREE.Vector3(
+        x,
+        y,
+        z
+    );
+}
+
+
+/* =====================================================
+   DESENHAR FRONTEIRAS
+===================================================== */
+
+function drawCountryBorders(){
+
+    countryLayer.clear();
+
+    countries.forEach(country => {
+
+        if(
+            !country.geometry ||
+            !country.geometry.coordinates
+        ){
+            return;
+        }
+
+        const polygons =
+            country.geometry.type === "Polygon"
+            ? [country.geometry.coordinates]
+            : country.geometry.coordinates;
+
+
+        polygons.forEach(polygon => {
+
+            polygon.forEach(ring => {
+
+                const points = [];
+
+                ring.forEach(coord => {
+
+                    const lon =
+                        coord[0];
+
+                    const lat =
+                        coord[1];
+
+                    points.push(
+                        latLonToVector3(
+                            lat,
+                            lon,
+                            1.006
+                        )
+                    );
+
+                });
+
+
+                if(points.length < 2){
+                    return;
+                }
+
+
+                const geometry =
+                    new THREE.BufferGeometry()
+                    .setFromPoints(points);
+
+
+                const material =
+                    new THREE.LineBasicMaterial({
+
+                        color:0x7db7d9,
+
+                        transparent:true,
+
+                        opacity:.65
+
+                    });
+
+
+                const line =
+                    new THREE.Line(
+                        geometry,
+                        material
+                    );
+
+
+                line.userData.country =
+                    country;
+
+
+                countryLayer.add(
+                    line
+                );
+
+            });
+
+        });
+
+    });
+
+}
+
+
+/* =====================================================
+   DESTACAR PAÍS
+===================================================== */
+
+function highlightCountry(country){
+
+    selectedCountry =
+        country;
+
+    document.getElementById(
+        "countryName"
+    ).textContent =
+        getCountryName(country);
+
+
+    countryLayer.children.forEach(
+        line => {
+
+            const same =
+                line.userData.country ===
+                country;
+
+            line.material.color.set(
+                same
+                ? 0x00d9ff
+                : 0x7db7d9
+            );
+
+            line.material.opacity =
+                same
+                ? 1
+                : .45;
+
+            line.material.linewidth =
+                same
+                ? 3
+                : 1;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   NOME DO PAÍS
+===================================================== */
+
+function getCountryName(country){
+
+    if(!country.properties){
+        return "País";
+    }
+
+    return (
+        country.properties.ADMIN ||
+        country.properties.NAME ||
+        country.properties.name ||
+        country.properties.NAME_EN ||
+        "País"
+    );
+
+}
+
+
+/* =====================================================
+   CLIQUE
+===================================================== */
+
+renderer.domElement.addEventListener(
+    "pointerdown",
+    function(event){
+
+        const rect =
+            renderer.domElement.getBoundingClientRect();
+
+
+        mouse.x =
+            ((event.clientX - rect.left) /
+            rect.width) * 2 - 1;
+
+        mouse.y =
+            -((event.clientY - rect.top) /
+            rect.height) * 2 + 1;
+
+
+        raycaster.setFromCamera(
+            mouse,
+            camera
+        );
+
+
+        const intersects =
+            raycaster.intersectObjects(
+                countryLayer.children
+            );
+
+
+        if(intersects.length > 0){
+
+            const country =
+                intersects[0].object
+                .userData.country;
+
+            if(country){
+
+                highlightCountry(
+                    country
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   CARREGAR GEOJSON
+===================================================== */
 
 fetch(
     "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
 )
 
-.then(response => response.json())
+.then(response => {
+
+    if(!response.ok){
+        throw new Error(
+            "Erro ao carregar países"
+        );
+    }
+
+    return response.json();
+
+})
 
 .then(data => {
 
-    globe.polygonsData(data.features);
+    countries =
+        data.features;
+
+    drawCountryBorders();
 
 })
 
 .catch(error => {
 
-    console.error(
-        "Erro ao carregar os países:",
-        error
-    );
+    console.error(error);
 
 });
 
 
-/* =========================
+/* =====================================================
+   ANIMAÇÃO
+===================================================== */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    controls.update();
+
+
+    if(window.cloudLayer){
+
+        window.cloudLayer.rotation.y +=
+            0.00008;
+
+    }
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+animate();
+
+
+/* =====================================================
    RESPONSIVO
-========================= */
+===================================================== */
 
 window.addEventListener(
     "resize",
-    () => {
+    function(){
 
-        globe
-            .width(window.innerWidth)
-            .height(window.innerHeight);
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
 
     }
 );
