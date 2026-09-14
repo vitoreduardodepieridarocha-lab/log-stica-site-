@@ -1,362 +1,787 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>MON World 3D</title>
+<title>MON World 3D</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #020617;
-            font-family: Arial, sans-serif;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        #globe {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-        }
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#020617;
+    font-family:Arial,sans-serif;
+}
 
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
+#globe{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+}
 
-        .back-button {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
+canvas{
+    display:block;
+}
 
-            padding: 12px 18px;
+.back-button{
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:100;
 
-            border: 1px solid rgba(255,255,255,.18);
-            border-radius: 12px;
+    padding:12px 18px;
 
-            background: rgba(0,0,0,.55);
-            color: white;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:12px;
 
-            text-decoration: none;
-            font-size: 15px;
+    background:rgba(0,0,0,.55);
+    color:white;
 
-            backdrop-filter: blur(10px);
-        }
+    text-decoration:none;
+    font-size:15px;
 
-        .back-button:hover {
-            background: rgba(255,255,255,.12);
-        }
+    backdrop-filter:blur(10px);
+}
 
-        .title {
-            position: fixed;
-            top: 22px;
-            right: 25px;
-            z-index: 100;
+.back-button:hover{
+    background:rgba(255,255,255,.12);
+}
 
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 2px;
+.title{
+    position:fixed;
+    top:22px;
+    right:25px;
+    z-index:100;
 
-            opacity: .85;
-        }
+    color:white;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:2px;
 
-        .instructions {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
+    opacity:.9;
+}
 
-            z-index: 100;
+.country-info{
+    position:fixed;
+    left:50%;
+    bottom:75px;
+    transform:translateX(-50%);
 
-            color: rgba(255,255,255,.75);
-            font-size: 13px;
+    z-index:100;
 
-            background: rgba(0,0,0,.35);
-            padding: 10px 16px;
-            border-radius: 20px;
+    min-width:230px;
 
-            backdrop-filter: blur(10px);
+    padding:13px 20px;
 
-            white-space: nowrap;
-        }
-    </style>
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:15px;
+
+    background:rgba(2,6,23,.72);
+    backdrop-filter:blur(14px);
+
+    color:white;
+    text-align:center;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.25s ease;
+}
+
+.country-info.active{
+    opacity:1;
+}
+
+.country-name{
+    font-size:16px;
+    font-weight:bold;
+}
+
+.country-action{
+    margin-top:5px;
+    font-size:12px;
+    color:rgba(255,255,255,.65);
+}
+
+.instructions{
+    position:fixed;
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%);
+
+    z-index:100;
+
+    color:rgba(255,255,255,.75);
+    font-size:13px;
+
+    background:rgba(0,0,0,.35);
+
+    padding:10px 16px;
+    border-radius:20px;
+
+    backdrop-filter:blur(10px);
+
+    white-space:nowrap;
+}
+
+.loading{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    font-size:15px;
+
+    z-index:50;
+    pointer-events:none;
+
+    transition:.4s;
+}
+
+.loading.hidden{
+    opacity:0;
+}
+
+</style>
 </head>
 
 <body>
 
-    <a href="index.html" class="back-button">
-        ← Voltar
-    </a>
+<a href="index.html" class="back-button">
+    ← Voltar
+</a>
 
-    <div class="title">
-        MON WORLD
+<div class="title">
+    MON WORLD
+</div>
+
+<div id="globe"></div>
+
+<div class="loading" id="loading">
+    Carregando MON World...
+</div>
+
+<div class="country-info" id="countryInfo">
+
+    <div class="country-name" id="countryName">
+        País
     </div>
 
-    <div id="globe"></div>
-
-    <div class="instructions">
-        🖱️ Arraste para girar • 🔍 Scroll para aproximar
+    <div class="country-action">
+        País selecionado
     </div>
 
+</div>
 
-    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<div class="instructions">
+    🖱️ Arraste para girar • 🔍 Use o zoom • 🌎 Clique em um país
+</div>
+
+
+<!-- THREE.JS -->
+
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 
 <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
+<!-- TOPOJSON -->
 
-    <script>
-
-        // =========================
-        // CENA
-        // =========================
-
-        const scene = new THREE.Scene();
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 
 
-        // =========================
-        // CÂMERA
-        // =========================
+<script>
 
-        const camera = new THREE.PerspectiveCamera(
-            45,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            100
+const container = document.getElementById("globe");
+
+const loading = document.getElementById("loading");
+
+const countryInfo = document.getElementById("countryInfo");
+
+const countryName = document.getElementById("countryName");
+
+
+/* =========================
+   CENA
+========================= */
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x020617);
+
+
+/* =========================
+   CÂMERA
+========================= */
+
+const camera = new THREE.PerspectiveCamera(
+    38,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
+
+camera.position.set(0,0,3.1);
+
+
+/* =========================
+   RENDERIZADOR
+========================= */
+
+const renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    alpha:false
+});
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,2)
+);
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.outputEncoding = THREE.sRGBEncoding;
+
+container.appendChild(renderer.domElement);
+
+
+/* =========================
+   ILUMINAÇÃO
+========================= */
+
+const ambientLight =
+    new THREE.AmbientLight(
+        0xffffff,
+        1.25
+    );
+
+scene.add(ambientLight);
+
+
+const sunLight =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2.4
+    );
+
+sunLight.position.set(
+    5,
+    3,
+    5
+);
+
+scene.add(sunLight);
+
+
+/* =========================
+   GRUPO DA TERRA
+========================= */
+
+const earthGroup = new THREE.Group();
+
+scene.add(earthGroup);
+
+
+/* =========================
+   TERRA
+========================= */
+
+const earthGeometry =
+    new THREE.SphereGeometry(
+        1,
+        96,
+        96
+    );
+
+
+const earthMaterial =
+    new THREE.MeshPhongMaterial({
+        color:0xffffff,
+        shininess:8
+    });
+
+
+const earth =
+    new THREE.Mesh(
+        earthGeometry,
+        earthMaterial
+    );
+
+earthGroup.add(earth);
+
+
+/* =========================
+   TEXTURA DA TERRA
+========================= */
+
+const textureLoader =
+    new THREE.TextureLoader();
+
+textureLoader.setCrossOrigin("anonymous");
+
+
+textureLoader.load(
+
+    "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg",
+
+    function(texture){
+
+        texture.anisotropy =
+            renderer.capabilities.getMaxAnisotropy();
+
+        earthMaterial.map = texture;
+
+        earthMaterial.needsUpdate = true;
+
+    },
+
+    undefined,
+
+    function(){
+
+        console.log(
+            "Textura da Terra não carregou."
         );
 
-        camera.position.set(0, 0, 2.8);
+    }
+
+);
 
 
-        // =========================
-        // RENDERIZADOR
-        // =========================
+/* =========================
+   NUVENS
+========================= */
 
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: false
-        });
+const cloudGeometry =
+    new THREE.SphereGeometry(
+        1.012,
+        96,
+        96
+    );
 
-        renderer.setPixelRatio(
-            Math.min(window.devicePixelRatio, 2)
+
+const cloudMaterial =
+    new THREE.MeshPhongMaterial({
+
+        transparent:true,
+
+        opacity:.24,
+
+        depthWrite:false,
+
+        side:THREE.DoubleSide
+
+    });
+
+
+const clouds =
+    new THREE.Mesh(
+        cloudGeometry,
+        cloudMaterial
+    );
+
+earthGroup.add(clouds);
+
+
+textureLoader.load(
+
+    "https://threejs.org/examples/textures/planets/earth_clouds_1024.png",
+
+    function(texture){
+
+        cloudMaterial.map = texture;
+
+        cloudMaterial.needsUpdate = true;
+
+    },
+
+    undefined,
+
+    function(){
+
+        clouds.visible = false;
+
+    }
+
+);
+
+
+/* =========================
+   ATMOSFERA
+========================= */
+
+const atmosphereGeometry =
+    new THREE.SphereGeometry(
+        1.045,
+        96,
+        96
+    );
+
+
+const atmosphereMaterial =
+    new THREE.MeshBasicMaterial({
+
+        color:0x3b82f6,
+
+        transparent:true,
+
+        opacity:.13,
+
+        side:THREE.BackSide
+
+    });
+
+
+const atmosphere =
+    new THREE.Mesh(
+        atmosphereGeometry,
+        atmosphereMaterial
+    );
+
+earthGroup.add(atmosphere);
+
+
+/* =========================
+   CONTROLES
+========================= */
+
+const controls =
+    new THREE.OrbitControls(
+        camera,
+        renderer.domElement
+    );
+
+controls.enableDamping = true;
+
+controls.dampingFactor = .055;
+
+controls.enableRotate = true;
+
+controls.enableZoom = true;
+
+controls.enablePan = false;
+
+controls.minDistance = 1.45;
+
+controls.maxDistance = 6;
+
+controls.rotateSpeed = .55;
+
+controls.zoomSpeed = .8;
+
+
+/* =========================
+   PAÍSES
+========================= */
+
+const countryGroup =
+    new THREE.Group();
+
+earthGroup.add(countryGroup);
+
+
+/* =========================
+   RAYCAST
+========================= */
+
+const raycaster =
+    new THREE.Raycaster();
+
+const mouse =
+    new THREE.Vector2();
+
+
+let selectedCountry = null;
+
+
+/* =========================
+   CONVERTER LAT/LON
+   PARA ESFERA
+========================= */
+
+function latLonToVector3(
+    lat,
+    lon,
+    radius
+){
+
+    const phi =
+        (90 - lat) *
+        Math.PI / 180;
+
+    const theta =
+        (lon + 180) *
+        Math.PI / 180;
+
+    return new THREE.Vector3(
+
+        -radius *
+        Math.sin(phi) *
+        Math.cos(theta),
+
+        radius *
+        Math.cos(phi),
+
+        radius *
+        Math.sin(phi) *
+        Math.sin(theta)
+
+    );
+
+}
+
+
+/* =========================
+   CARREGAR MAPA
+========================= */
+
+fetch(
+    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+)
+
+.then(response => response.json())
+
+.then(worldData => {
+
+    const countries =
+        topojson.feature(
+            worldData,
+            worldData.objects.countries
         );
+
+    countries.features.forEach(
+        country => {
+
+            const polygons =
+                country.geometry.type === "Polygon"
+                ? [country.geometry.coordinates]
+                : country.geometry.coordinates;
+
+
+            polygons.forEach(
+                polygon => {
+
+                    polygon.forEach(
+                        ring => {
+
+                            const points = [];
+
+                            ring.forEach(
+                                coordinate => {
+
+                                    const lon =
+                                        coordinate[0];
+
+                                    const lat =
+                                        coordinate[1];
+
+                                    points.push(
+                                        latLonToVector3(
+                                            lat,
+                                            lon,
+                                            1.006
+                                        )
+                                    );
+
+                                }
+                            );
+
+
+                            const lineGeometry =
+                                new THREE.BufferGeometry()
+                                    .setFromPoints(points);
+
+
+                            const lineMaterial =
+                                new THREE.LineBasicMaterial({
+
+                                    color:0x8ec5ff,
+
+                                    transparent:true,
+
+                                    opacity:.58
+
+                                });
+
+
+                            const line =
+                                new THREE.Line(
+                                    lineGeometry,
+                                    lineMaterial
+                                );
+
+
+                            line.userData.country =
+                                country.properties
+                                ? country.properties.name
+                                : "País";
+
+
+                            line.userData.countryId =
+                                country.id;
+
+
+                            countryGroup.add(line);
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+    loading.classList.add("hidden");
+
+})
+
+.catch(error => {
+
+    console.log(
+        "Erro ao carregar países:",
+        error
+    );
+
+    loading.innerText =
+        "MON World";
+
+    setTimeout(
+        () => loading.classList.add("hidden"),
+        1000
+    );
+
+});
+
+
+/* =========================
+   CLIQUE NOS PAÍSES
+========================= */
+
+renderer.domElement.addEventListener(
+    "pointerdown",
+    function(event){
+
+        const rect =
+            renderer.domElement
+            .getBoundingClientRect();
+
+
+        mouse.x =
+            ((event.clientX - rect.left)
+            / rect.width) * 2 - 1;
+
+
+        mouse.y =
+            -((event.clientY - rect.top)
+            / rect.height) * 2 + 1;
+
+
+        raycaster.setFromCamera(
+            mouse,
+            camera
+        );
+
+
+        const intersections =
+            raycaster.intersectObjects(
+                countryGroup.children,
+                true
+            );
+
+
+        if(intersections.length){
+
+            const object =
+                intersections[0].object;
+
+
+            selectedCountry =
+                object.userData.country;
+
+
+            countryName.innerText =
+                selectedCountry ||
+                "País selecionado";
+
+
+            countryInfo.classList.add(
+                "active"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   ANIMAÇÃO
+========================= */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    controls.update();
+
+
+    clouds.rotation.y +=
+        0.00015;
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+animate();
+
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+window.addEventListener(
+    "resize",
+    function(){
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
 
         renderer.setSize(
             window.innerWidth,
             window.innerHeight
         );
 
-        renderer.setClearColor(0x020617, 1);
+    }
+);
 
-        document
-            .getElementById("globe")
-            .appendChild(renderer.domElement);
-
-
-        // =========================
-        // ILUMINAÇÃO
-        // =========================
-
-        const ambientLight = new THREE.AmbientLight(
-            0xffffff,
-            1.5
-        );
-
-        scene.add(ambientLight);
-
-
-        const sunLight = new THREE.DirectionalLight(
-            0xffffff,
-            2.5
-        );
-
-        sunLight.position.set(
-            5,
-            3,
-            5
-        );
-
-        scene.add(sunLight);
-
-
-        // =========================
-        // TERRA
-        // =========================
-
-        const geometry = new THREE.SphereGeometry(
-            1,
-            64,
-            64
-        );
-
-
-        // Material inicial azul.
-        // Assim o globo aparece mesmo antes
-        // da textura terminar de carregar.
-
-        const material = new THREE.MeshStandardMaterial({
-            color: 0x1769ff,
-            roughness: 0.8,
-            metalness: 0
-        });
-
-
-        const earth = new THREE.Mesh(
-            geometry,
-            material
-        );
-
-        scene.add(earth);
-
-
-        // =========================
-        // TEXTURA DA TERRA
-        // =========================
-
-        const textureLoader =
-            new THREE.TextureLoader();
-
-
-        textureLoader.load(
-
-            "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg",
-
-            function(texture) {
-
-                material.map = texture;
-
-                material.color.set(0xffffff);
-
-                material.needsUpdate = true;
-
-            },
-
-            undefined,
-
-            function(error) {
-
-                console.log(
-                    "A textura não carregou. O globo azul continuará funcionando."
-                );
-
-            }
-
-        );
-
-
-        // =========================
-        // ATMOSFERA
-        // =========================
-
-        const atmosphereGeometry =
-            new THREE.SphereGeometry(
-                1.035,
-                64,
-                64
-            );
-
-
-        const atmosphereMaterial =
-            new THREE.MeshBasicMaterial({
-                color: 0x3b82f6,
-                transparent: true,
-                opacity: 0.10,
-                side: THREE.BackSide
-            });
-
-
-        const atmosphere =
-            new THREE.Mesh(
-                atmosphereGeometry,
-                atmosphereMaterial
-            );
-
-        scene.add(atmosphere);
-
-
-        // =========================
-        // CONTROLES
-        // =========================
-
-        const controls =
-            new THREE.OrbitControls(
-                camera,
-                renderer.domElement
-            );
-
-
-        controls.enableDamping = true;
-
-        controls.dampingFactor = 0.06;
-
-        controls.enableRotate = true;
-
-        controls.enableZoom = true;
-
-        controls.enablePan = false;
-
-        controls.minDistance = 1.4;
-
-        controls.maxDistance = 6;
-
-
-        // =========================
-        // ANIMAÇÃO
-        // =========================
-
-        function animate() {
-
-            requestAnimationFrame(
-                animate
-            );
-
-            controls.update();
-
-            renderer.render(
-                scene,
-                camera
-            );
-        }
-
-
-        animate();
-
-
-        // =========================
-        // RESPONSIVO
-        // =========================
-
-        window.addEventListener(
-            "resize",
-            function() {
-
-                camera.aspect =
-                    window.innerWidth /
-                    window.innerHeight;
-
-                camera.updateProjectionMatrix();
-
-                renderer.setSize(
-                    window.innerWidth,
-                    window.innerHeight
-                );
-
-            }
-        );
-
-    </script>
+</script>
 
 </body>
 </html>
