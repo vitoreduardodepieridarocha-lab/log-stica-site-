@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MON World</title>
+<title>MON World - Logística Global</title>
 
 <style>
 *{
@@ -17,7 +17,7 @@ html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#020617;
+    background:#000812;
     font-family:Arial,Helvetica,sans-serif;
 }
 
@@ -26,125 +26,259 @@ html,body{
     inset:0;
 }
 
-/* VOLTAR */
+/* =========================
+   VOLTAR
+========================= */
+
 .back{
     position:fixed;
     top:20px;
     left:20px;
-    z-index:20;
+    z-index:50;
 
-    padding:12px 18px;
+    padding:11px 17px;
 
     color:white;
     text-decoration:none;
 
-    background:rgba(5,15,30,.75);
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:12px;
+    background:rgba(2,12,25,.85);
+    border:1px solid rgba(80,170,220,.25);
+    border-radius:11px;
 
     backdrop-filter:blur(12px);
 }
 
-/* TÍTULO */
+/* =========================
+   TÍTULO
+========================= */
+
 .title{
     position:fixed;
-    top:24px;
+    top:23px;
     right:25px;
-    z-index:20;
+    z-index:50;
 
-    color:white;
+    color:#dff5ff;
     font-size:14px;
     font-weight:bold;
     letter-spacing:3px;
 }
 
-/* PAINEL DO PAÍS */
-.country-box{
+/* =========================
+   AJUDA
+========================= */
+
+.help{
     position:fixed;
+    top:63px;
     left:50%;
-    bottom:25px;
     transform:translateX(-50%);
 
-    z-index:20;
+    z-index:50;
 
-    min-width:250px;
+    color:rgba(210,235,250,.65);
+    font-size:11px;
 
-    padding:14px 24px;
+    white-space:nowrap;
+}
+
+/* =========================
+   PAÍS SELECIONADO
+========================= */
+
+.country-box{
+    position:fixed;
+    top:95px;
+    left:50%;
+    transform:translateX(-50%);
+
+    z-index:50;
+
+    padding:9px 18px;
+
+    min-width:190px;
 
     text-align:center;
 
     color:white;
 
-    background:rgba(3,12,25,.82);
-    border:1px solid rgba(0,180,255,.3);
-    border-radius:16px;
+    background:rgba(2,12,25,.78);
+    border:1px solid rgba(0,180,255,.25);
+    border-radius:12px;
 
-    backdrop-filter:blur(15px);
-
-    box-shadow:0 10px 40px rgba(0,0,0,.35);
+    backdrop-filter:blur(12px);
 }
 
 .country-label{
-    font-size:11px;
-    color:#8ca5bd;
+    font-size:9px;
+    color:#6e9ab5;
     text-transform:uppercase;
     letter-spacing:2px;
 }
 
 #countryName{
-    margin-top:5px;
-
-    font-size:21px;
+    margin-top:3px;
+    font-size:16px;
     font-weight:bold;
-
-    color:#ffffff;
 }
 
-/* INSTRUÇÕES */
-.help{
+/* =========================
+   PAINEL DE ROTA
+========================= */
+
+.route-panel{
     position:fixed;
-    top:65px;
     left:50%;
+    bottom:18px;
     transform:translateX(-50%);
 
-    z-index:20;
+    z-index:100;
 
-    padding:8px 14px;
+    width:min(700px, calc(100% - 30px));
 
-    color:rgba(255,255,255,.7);
+    padding:15px;
 
-    font-size:12px;
+    background:rgba(2,10,20,.93);
 
-    background:rgba(0,0,0,.3);
-    border-radius:20px;
+    border:1px solid rgba(70,170,220,.28);
 
-    white-space:nowrap;
+    border-radius:18px;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.55);
 }
 
-/* MOBILE */
-@media(max-width:600px){
+.route-title{
+    color:white;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    margin-bottom:11px;
+}
+
+.route-fields{
+    display:grid;
+    grid-template-columns:1fr 1fr 120px 100px;
+    gap:8px;
+}
+
+select,
+button{
+    width:100%;
+    height:42px;
+
+    border-radius:9px;
+
+    border:1px solid rgba(120,190,220,.22);
+
+    background:#071827;
+
+    color:white;
+
+    padding:0 10px;
+
+    outline:none;
+
+    font-size:12px;
+}
+
+select:focus{
+    border-color:#00bfff;
+}
+
+button{
+    background:#008ed1;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#00a9ef;
+}
+
+.route-status{
+    margin-top:10px;
+
+    color:#83aabd;
+
+    font-size:11px;
+
+    text-align:center;
+}
+
+.route-status.active{
+    color:#55d8ff;
+}
+
+/* =========================
+   ANIMAÇÃO DO VEÍCULO
+========================= */
+
+.vehicle{
+    position:fixed;
+
+    z-index:80;
+
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:27px;
+
+    pointer-events:none;
+
+    filter:
+        drop-shadow(0 0 7px rgba(0,190,255,.8));
+
+    opacity:0;
+}
+
+.vehicle.show{
+    opacity:1;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:650px){
 
     .title{
+        top:22px;
         right:15px;
-        top:24px;
-        font-size:12px;
-    }
-
-    .back{
-        top:15px;
-        left:15px;
-        padding:10px 14px;
+        font-size:11px;
     }
 
     .help{
-        top:62px;
-        font-size:10px;
+        top:60px;
+        font-size:9px;
     }
 
     .country-box{
-        bottom:18px;
-        min-width:220px;
+        top:88px;
     }
+
+    .route-panel{
+        bottom:10px;
+        padding:12px;
+    }
+
+    .route-fields{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .route-fields button,
+    .route-fields select:last-of-type{
+        width:100%;
+    }
+
 }
 </style>
 </head>
@@ -160,10 +294,8 @@ html,body{
 </div>
 
 <div class="help">
-    Arraste para girar • Pinça/scroll para zoom • Clique no país
+    Arraste para girar • Scroll para aproximar • Clique em um país
 </div>
-
-<div id="globe"></div>
 
 <div class="country-box">
     <div class="country-label">
@@ -175,8 +307,60 @@ html,body{
     </div>
 </div>
 
+<div id="globe"></div>
+
+<div id="vehicle" class="vehicle">
+    ✈️
+</div>
+
+
+<!-- =========================
+     PAINEL DE ROTA
+========================= -->
+
+<div class="route-panel">
+
+    <div class="route-title">
+        🌎 PLANEJAR TRANSPORTE
+    </div>
+
+    <div class="route-fields">
+
+        <select id="origin">
+            <option value="">País de origem</option>
+        </select>
+
+        <select id="destination">
+            <option value="">País de destino</option>
+        </select>
+
+        <select id="transport">
+
+            <option value="air">
+                ✈️ Avião
+            </option>
+
+            <option value="sea">
+                🚢 Navio
+            </option>
+
+        </select>
+
+        <button id="routeButton">
+            CRIAR ROTA
+        </button>
+
+    </div>
+
+    <div id="routeStatus" class="route-status">
+        Escolha a origem e o destino.
+    </div>
+
+</div>
+
 
 <!-- THREE.JS -->
+
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 
 <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -184,41 +368,78 @@ html,body{
 
 <script>
 
-const container = document.getElementById("globe");
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const container =
+    document.getElementById("globe");
+
+const countryName =
+    document.getElementById("countryName");
+
+const originSelect =
+    document.getElementById("origin");
+
+const destinationSelect =
+    document.getElementById("destination");
+
+const transportSelect =
+    document.getElementById("transport");
+
+const routeButton =
+    document.getElementById("routeButton");
+
+const routeStatus =
+    document.getElementById("routeStatus");
+
+const vehicle =
+    document.getElementById("vehicle");
 
 
 /* =====================================================
    CENA
 ===================================================== */
 
-const scene = new THREE.Scene();
+const scene =
+    new THREE.Scene();
 
 
 /* =====================================================
    CÂMERA
 ===================================================== */
 
-const camera = new THREE.PerspectiveCamera(
-    35,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-);
+const camera =
+    new THREE.PerspectiveCamera(
+        35,
+        window.innerWidth /
+        window.innerHeight,
+        0.1,
+        100
+    );
 
-camera.position.set(0,0,3);
+camera.position.set(
+    0,
+    0,
+    3
+);
 
 
 /* =====================================================
    RENDER
 ===================================================== */
 
-const renderer = new THREE.WebGLRenderer({
-    antialias:true,
-    alpha:false
-});
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias:true,
+        alpha:false
+    });
 
 renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio,2)
+    Math.min(
+        window.devicePixelRatio,
+        2
+    )
 );
 
 renderer.setSize(
@@ -227,7 +448,7 @@ renderer.setSize(
 );
 
 renderer.setClearColor(
-    0x020617,
+    0x000812,
     1
 );
 
@@ -240,18 +461,20 @@ container.appendChild(
    LUZ
 ===================================================== */
 
-const ambient = new THREE.AmbientLight(
-    0xffffff,
-    1.7
-);
+const ambient =
+    new THREE.AmbientLight(
+        0xffffff,
+        1.15
+    );
 
 scene.add(ambient);
 
 
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    3
-);
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2.2
+    );
 
 sun.position.set(
     5,
@@ -277,9 +500,11 @@ const earthGeometry =
 const earthMaterial =
     new THREE.MeshPhongMaterial({
 
-        shininess:8,
+        color:0x315a72,
 
-        specular:0x222222
+        shininess:10,
+
+        specular:0x162b38
 
     });
 
@@ -294,7 +519,7 @@ scene.add(earth);
 
 
 /* =====================================================
-   TEXTURA NÍTIDA
+   TEXTURA DA TERRA
 ===================================================== */
 
 const loader =
@@ -308,19 +533,21 @@ loader.load(
     function(texture){
 
         texture.anisotropy =
-            renderer.capabilities.getMaxAnisotropy();
-
-        texture.minFilter =
-            THREE.LinearMipmapLinearFilter;
-
-        texture.magFilter =
-            THREE.LinearFilter;
+            renderer.capabilities
+            .getMaxAnisotropy();
 
         earthMaterial.map =
             texture;
 
+        /* deixa a imagem mais escura */
+
+        earthMaterial.color.set(
+            0x8ba7b5
+        );
+
         earthMaterial.needsUpdate =
             true;
+
     }
 
 );
@@ -336,21 +563,21 @@ loader.load(
 
     function(texture){
 
-        const cloudGeometry =
+        const geometry =
             new THREE.SphereGeometry(
                 1.008,
                 128,
                 128
             );
 
-        const cloudMaterial =
+        const material =
             new THREE.MeshPhongMaterial({
 
                 map:texture,
 
                 transparent:true,
 
-                opacity:.28,
+                opacity:.16,
 
                 depthWrite:false
 
@@ -358,8 +585,8 @@ loader.load(
 
         const clouds =
             new THREE.Mesh(
-                cloudGeometry,
-                cloudMaterial
+                geometry,
+                material
             );
 
         scene.add(clouds);
@@ -387,24 +614,23 @@ const atmosphereGeometry =
 const atmosphereMaterial =
     new THREE.MeshBasicMaterial({
 
-        color:0x168cff,
+        color:0x0879b8,
 
         transparent:true,
 
-        opacity:.10,
+        opacity:.07,
 
         side:THREE.BackSide
 
     });
 
 
-const atmosphere =
+scene.add(
     new THREE.Mesh(
         atmosphereGeometry,
         atmosphereMaterial
-    );
-
-scene.add(atmosphere);
+    )
+);
 
 
 /* =====================================================
@@ -447,20 +673,13 @@ let countries = [];
 
 let selectedCountry = null;
 
+let originCountry = null;
 
-/* =====================================================
-   RAYCAST
-===================================================== */
-
-const raycaster =
-    new THREE.Raycaster();
-
-const mouse =
-    new THREE.Vector2();
+let destinationCountry = null;
 
 
 /* =====================================================
-   CAMADA DOS PAÍSES
+   CAMADA DAS FRONTEIRAS
 ===================================================== */
 
 const countryLayer =
@@ -472,7 +691,19 @@ scene.add(
 
 
 /* =====================================================
-   CONVERTER LAT/LON
+   CAMADA DA ROTA
+===================================================== */
+
+const routeLayer =
+    new THREE.Group();
+
+scene.add(
+    routeLayer
+);
+
+
+/* =====================================================
+   LAT/LON → 3D
 ===================================================== */
 
 function latLonToVector3(
@@ -482,10 +713,12 @@ function latLonToVector3(
 ){
 
     const phi =
-        (90 - lat) * Math.PI / 180;
+        (90 - lat) *
+        Math.PI / 180;
 
     const theta =
-        (lon + 180) * Math.PI / 180;
+        (lon + 180) *
+        Math.PI / 180;
 
     const x =
         -radius *
@@ -510,150 +743,14 @@ function latLonToVector3(
 
 
 /* =====================================================
-   DESENHAR FRONTEIRAS
-===================================================== */
-
-function drawCountryBorders(){
-
-    countryLayer.clear();
-
-    countries.forEach(country => {
-
-        if(
-            !country.geometry ||
-            !country.geometry.coordinates
-        ){
-            return;
-        }
-
-        const polygons =
-            country.geometry.type === "Polygon"
-            ? [country.geometry.coordinates]
-            : country.geometry.coordinates;
-
-
-        polygons.forEach(polygon => {
-
-            polygon.forEach(ring => {
-
-                const points = [];
-
-                ring.forEach(coord => {
-
-                    const lon =
-                        coord[0];
-
-                    const lat =
-                        coord[1];
-
-                    points.push(
-                        latLonToVector3(
-                            lat,
-                            lon,
-                            1.006
-                        )
-                    );
-
-                });
-
-
-                if(points.length < 2){
-                    return;
-                }
-
-
-                const geometry =
-                    new THREE.BufferGeometry()
-                    .setFromPoints(points);
-
-
-                const material =
-                    new THREE.LineBasicMaterial({
-
-                        color:0x7db7d9,
-
-                        transparent:true,
-
-                        opacity:.65
-
-                    });
-
-
-                const line =
-                    new THREE.Line(
-                        geometry,
-                        material
-                    );
-
-
-                line.userData.country =
-                    country;
-
-
-                countryLayer.add(
-                    line
-                );
-
-            });
-
-        });
-
-    });
-
-}
-
-
-/* =====================================================
-   DESTACAR PAÍS
-===================================================== */
-
-function highlightCountry(country){
-
-    selectedCountry =
-        country;
-
-    document.getElementById(
-        "countryName"
-    ).textContent =
-        getCountryName(country);
-
-
-    countryLayer.children.forEach(
-        line => {
-
-            const same =
-                line.userData.country ===
-                country;
-
-            line.material.color.set(
-                same
-                ? 0x00d9ff
-                : 0x7db7d9
-            );
-
-            line.material.opacity =
-                same
-                ? 1
-                : .45;
-
-            line.material.linewidth =
-                same
-                ? 3
-                : 1;
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   NOME DO PAÍS
+   NOME
 ===================================================== */
 
 function getCountryName(country){
 
-    if(!country.properties){
+    if(!country ||
+       !country.properties){
+
         return "País";
     }
 
@@ -664,29 +761,616 @@ function getCountryName(country){
         country.properties.NAME_EN ||
         "País"
     );
+}
+
+
+/* =====================================================
+   CENTRO DO PAÍS
+===================================================== */
+
+function getCountryCenter(country){
+
+    let coordinates =
+        country.geometry.coordinates;
+
+    let point = null;
+
+    if(
+        country.geometry.type ===
+        "Polygon"
+    ){
+
+        point =
+            coordinates[0][0];
+
+    }else{
+
+        point =
+            coordinates[0][0][0];
+
+    }
+
+    if(!point){
+
+        return {
+            lat:0,
+            lon:0
+        };
+
+    }
+
+    return {
+        lon:point[0],
+        lat:point[1]
+    };
 
 }
 
 
 /* =====================================================
-   CLIQUE
+   DESENHAR FRONTEIRAS
 ===================================================== */
+
+function drawBorders(){
+
+    countryLayer.clear();
+
+    countries.forEach(
+        country => {
+
+            if(
+                !country.geometry ||
+                !country.geometry.coordinates
+            ){
+                return;
+            }
+
+            const polygons =
+                country.geometry.type ===
+                "Polygon"
+
+                ? [country.geometry.coordinates]
+
+                : country.geometry.coordinates;
+
+
+            polygons.forEach(
+                polygon => {
+
+                    polygon.forEach(
+                        ring => {
+
+                            const points =
+                                [];
+
+                            ring.forEach(
+                                coord => {
+
+                                    points.push(
+                                        latLonToVector3(
+                                            coord[1],
+                                            coord[0],
+                                            1.006
+                                        )
+                                    );
+
+                                }
+                            );
+
+
+                            if(
+                                points.length < 2
+                            ){
+                                return;
+                            }
+
+
+                            const geometry =
+                                new THREE.BufferGeometry()
+                                .setFromPoints(
+                                    points
+                                );
+
+
+                            const material =
+                                new THREE.LineBasicMaterial({
+
+                                    color:0x6f9caf,
+
+                                    transparent:true,
+
+                                    opacity:.55
+
+                                });
+
+
+                            const line =
+                                new THREE.Line(
+                                    geometry,
+                                    material
+                                );
+
+
+                            line.userData.country =
+                                country;
+
+
+                            countryLayer.add(
+                                line
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   DESTACAR PAÍSES
+===================================================== */
+
+function updateHighlights(){
+
+    countryLayer.children.forEach(
+        line => {
+
+            const c =
+                line.userData.country;
+
+            const isOrigin =
+                c === originCountry;
+
+            const isDestination =
+                c === destinationCountry;
+
+            const isSelected =
+                c === selectedCountry;
+
+
+            if(
+                isOrigin ||
+                isDestination ||
+                isSelected
+            ){
+
+                line.material.color.set(
+                    isOrigin
+                    ? 0x00ff88
+                    : 0x00d9ff
+                );
+
+                line.material.opacity =
+                    1;
+
+            }else{
+
+                line.material.color.set(
+                    0x6f9caf
+                );
+
+                line.material.opacity =
+                    .42;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   PREENCHER SELECTS
+===================================================== */
+
+function populateCountries(){
+
+    const sorted =
+        [...countries].sort(
+            (a,b) =>
+                getCountryName(a)
+                .localeCompare(
+                    getCountryName(b)
+                )
+        );
+
+
+    sorted.forEach(
+        country => {
+
+            const name =
+                getCountryName(country);
+
+
+            const option1 =
+                document.createElement(
+                    "option"
+                );
+
+            option1.value =
+                name;
+
+            option1.textContent =
+                name;
+
+            originSelect.appendChild(
+                option1
+            );
+
+
+            const option2 =
+                document.createElement(
+                    "option"
+                );
+
+            option2.value =
+                name;
+
+            option2.textContent =
+                name;
+
+            destinationSelect.appendChild(
+                option2
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ENCONTRAR PAÍS
+===================================================== */
+
+function findCountry(name){
+
+    return countries.find(
+        country =>
+            getCountryName(country)
+            === name
+    );
+
+}
+
+
+/* =====================================================
+   ROTA CURVA
+===================================================== */
+
+function createRoute(){
+
+    routeLayer.clear();
+
+
+    if(
+        !originCountry ||
+        !destinationCountry
+    ){
+        return;
+    }
+
+
+    const origin =
+        getCountryCenter(
+            originCountry
+        );
+
+    const destination =
+        getCountryCenter(
+            destinationCountry
+        );
+
+
+    const start =
+        latLonToVector3(
+            origin.lat,
+            origin.lon,
+            1.025
+        );
+
+    const end =
+        latLonToVector3(
+            destination.lat,
+            destination.lon,
+            1.025
+        );
+
+
+    const middle =
+        start.clone()
+        .add(end)
+        .normalize()
+        .multiplyScalar(
+            1.35
+        );
+
+
+    const curve =
+        new THREE.QuadraticBezierCurve3(
+            start,
+            middle,
+            end
+        );
+
+
+    const points =
+        curve.getPoints(
+            120
+        );
+
+
+    const geometry =
+        new THREE.BufferGeometry()
+        .setFromPoints(
+            points
+        );
+
+
+    const material =
+        new THREE.LineBasicMaterial({
+
+            color:0x00cfff,
+
+            transparent:true,
+
+            opacity:.9
+
+        });
+
+
+    const line =
+        new THREE.Line(
+            geometry,
+            material
+        );
+
+
+    routeLayer.add(
+        line
+    );
+
+
+    animateVehicle(
+        curve
+    );
+
+}
+
+
+/* =====================================================
+   ANIMAÇÃO AVIÃO/NAVIO
+===================================================== */
+
+let animationId = null;
+
+
+function animateVehicle(curve){
+
+    if(animationId){
+
+        cancelAnimationFrame(
+            animationId
+        );
+
+    }
+
+
+    vehicle.classList.add(
+        "show"
+    );
+
+
+    const type =
+        transportSelect.value;
+
+
+    vehicle.textContent =
+        type === "sea"
+        ? "🚢"
+        : "✈️";
+
+
+    const startTime =
+        performance.now();
+
+
+    const duration =
+        8000;
+
+
+    function move(now){
+
+        const elapsed =
+            now - startTime;
+
+
+        let progress =
+            (elapsed % duration) /
+            duration;
+
+
+        const point =
+            curve.getPoint(
+                progress
+            );
+
+
+        const projected =
+            point.clone()
+        ;
+
+        projected.project(
+            camera
+        );
+
+
+        const x =
+            (projected.x * .5 + .5) *
+            window.innerWidth;
+
+
+        const y =
+            (-projected.y * .5 + .5) *
+            window.innerHeight;
+
+
+        vehicle.style.left =
+            (x - 21) + "px";
+
+
+        vehicle.style.top =
+            (y - 21) + "px";
+
+
+        animationId =
+            requestAnimationFrame(
+                move
+            );
+
+    }
+
+
+    animationId =
+        requestAnimationFrame(
+            move
+        );
+
+}
+
+
+/* =====================================================
+   CRIAR ROTA PELO BOTÃO
+===================================================== */
+
+routeButton.addEventListener(
+    "click",
+    function(){
+
+        const originName =
+            originSelect.value;
+
+        const destinationName =
+            destinationSelect.value;
+
+
+        if(
+            !originName ||
+            !destinationName
+        ){
+
+            routeStatus.textContent =
+                "Escolha os dois países.";
+
+            routeStatus.classList.remove(
+                "active"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            originName ===
+            destinationName
+        ){
+
+            routeStatus.textContent =
+                "A origem e o destino precisam ser diferentes.";
+
+            return;
+
+        }
+
+
+        originCountry =
+            findCountry(
+                originName
+            );
+
+        destinationCountry =
+            findCountry(
+                destinationName
+            );
+
+
+        selectedCountry =
+            null;
+
+
+        countryName.textContent =
+            originName +
+            " → " +
+            destinationName;
+
+
+        updateHighlights();
+
+
+        createRoute();
+
+
+        const vehicleName =
+            transportSelect.value ===
+            "sea"
+            ? "navio"
+            : "avião";
+
+
+        routeStatus.textContent =
+            vehicleName.toUpperCase() +
+            " em rota: " +
+            originName +
+            " → " +
+            destinationName;
+
+        routeStatus.classList.add(
+            "active"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CLIQUE NOS PAÍSES
+===================================================== */
+
+const raycaster =
+    new THREE.Raycaster();
+
+const mouse =
+    new THREE.Vector2();
+
 
 renderer.domElement.addEventListener(
     "pointerdown",
     function(event){
 
         const rect =
-            renderer.domElement.getBoundingClientRect();
+            renderer.domElement
+            .getBoundingClientRect();
 
 
         mouse.x =
-            ((event.clientX - rect.left) /
-            rect.width) * 2 - 1;
+            ((event.clientX -
+            rect.left) /
+            rect.width) *
+            2 - 1;
+
 
         mouse.y =
-            -((event.clientY - rect.top) /
-            rect.height) * 2 + 1;
+            -((event.clientY -
+            rect.top) /
+            rect.height) *
+            2 + 1;
 
 
         raycaster.setFromCamera(
@@ -695,25 +1379,30 @@ renderer.domElement.addEventListener(
         );
 
 
-        const intersects =
+        const hits =
             raycaster.intersectObjects(
                 countryLayer.children
             );
 
 
-        if(intersects.length > 0){
+        if(hits.length){
 
             const country =
-                intersects[0].object
+                hits[0].object
                 .userData.country;
 
-            if(country){
 
-                highlightCountry(
+            selectedCountry =
+                country;
+
+
+            countryName.textContent =
+                getCountryName(
                     country
                 );
 
-            }
+
+            updateHighlights();
 
         }
 
@@ -722,43 +1411,58 @@ renderer.domElement.addEventListener(
 
 
 /* =====================================================
-   CARREGAR GEOJSON
+   CARREGAR PAÍSES
 ===================================================== */
 
 fetch(
     "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
 )
 
-.then(response => {
+.then(
+    response => {
 
-    if(!response.ok){
-        throw new Error(
-            "Erro ao carregar países"
-        );
+        if(!response.ok){
+
+            throw new Error(
+                "Erro ao carregar países"
+            );
+
+        }
+
+        return response.json();
+
     }
+)
 
-    return response.json();
+.then(
+    data => {
 
-})
+        countries =
+            data.features;
 
-.then(data => {
+        drawBorders();
 
-    countries =
-        data.features;
+        populateCountries();
 
-    drawCountryBorders();
+    }
+)
 
-})
+.catch(
+    error => {
 
-.catch(error => {
+        console.error(
+            error
+        );
 
-    console.error(error);
+        routeStatus.textContent =
+            "Não foi possível carregar os países.";
 
-});
+    }
+);
 
 
 /* =====================================================
-   ANIMAÇÃO
+   ANIMAÇÃO PRINCIPAL
 ===================================================== */
 
 function animate(){
@@ -771,10 +1475,12 @@ function animate(){
     controls.update();
 
 
-    if(window.cloudLayer){
+    if(
+        window.cloudLayer
+    ){
 
         window.cloudLayer.rotation.y +=
-            0.00008;
+            .00004;
 
     }
 
